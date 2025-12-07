@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeverWord</title>
+    <style>
+/* Παλέτα εμπνευσμένη από την εικονογράφηση */
+:root {
+    --nw-deep-blue: #0f2740;
+    --nw-mid-blue:  #234a73;
+    --nw-light-blue:#c1d4e3;
+    --nw-paper:     #f5f2ea;
+    --nw-ink-dark:  #151821;
+    --nw-red:       #c73536;
+    --nw-accent:    #f0d8a4; /* Χρυσό/Κίτρινο για έμφαση */
+    --nw-footer-color: #d1b473; /* Ελαφρώς πιο ζεστό χρυσό για το footer */
+}
+
+/* Γενικό φόντο & κείμενο */
+body {
+    font-family: "Georgia", "Times New Roman", serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 16px 100px;
+    background: radial-gradient(circle at top, #233f63 0%, var(--nw-deep-blue) 55%, #050810 100%);
+    color: var(--nw-paper);
+}
+
+/* Κεφαλίδα */
+.header {
+    text-align: center;
+    margin-bottom: 28px;
+    padding: 18px 12px 22px;
+    border-radius: 10px;
+    position: relative;
+    background: linear-gradient(135deg, rgba(10,26,48,0.95), rgba(18,44,78,0.98));
+    box-shadow:
+        0 14px 26px rgba(0,0,0,0.65),
+        0 0 0 1px rgba(10,15,30,0.9);
+    overflow: hidden;
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.08);
+    pointer-events: none;
+}
+
+.header h1 {
+    margin: 0 0 4px 0;
+    font-family: "Cinzel", "Georgia", serif;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    font-size: clamp(1.6rem, 3vw, 2rem);
+    color: var(--nw-red);
+    text-shadow:
+        0 0 12px rgba(0,0,0,0.9),
+        0 2px 0 rgba(0,0,0,0.7);
+}
+
+.header p {
+    margin: 4px 0 0 0;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--nw-accent);
+}
+
+/* Περιοχή αναζήτησης */
+.search-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 26px;
+}
+
+#searchInput {
+    width: min(420px, 100%);
+    padding: 11px 12px;
+    font-size: 0.98rem;
+    border-radius: 999px;
+    border: 1px solid rgba(240,216,164,0.6);
+    background: rgba(9,22,42,0.9);
+    color: var(--nw-paper);
+    box-shadow:
+        inset 0 0 0 1px rgba(0,0,0,0.7),
+        0 6px 14px rgba(0,0,0,0.6);
+}
+
+#searchInput::placeholder {
+    color: rgba(193,212,227,0.6);
+    font-style: italic;
+}
+
+#searchInput:focus {
+    outline: none;
+    border-color: var(--nw-accent);
+    box-shadow:
+        0 0 0 1px rgba(240,216,164,0.8),
+        0 0 18px rgba(240,216,164,0.25);
+}
+
+#searchBtn {
+    padding: 11px 20px;
+    border-radius: 999px;
+    border: 1px solid rgba(199,53,54,0.9);
+    background: linear-gradient(135deg, #911f27, var(--nw-red));
+    color: #fdf6ef;
+    font-size: 0.94rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    box-shadow:
+        0 7px 14px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(0,0,0,0.9);
+    transition: transform 0.08s ease-out,
+                box-shadow 0.08s ease-out,
+                background 0.1s ease-out;
+}
+
+#searchBtn:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #b52b31, var(--nw-red));
+    box-shadow:
+        0 9px 18px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(0,0,0,0.9);
+}
+
+#searchBtn:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(0,0,0,0.9);
+}
+
+/* Μήνυμα σφάλματος */
+.error {
+    color: #3b0808;
+    background: rgba(248,227,221,0.96);
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    border: 1px solid rgba(199,53,54,0.55);
+    font-size: 0.9rem;
+}
+
+/* Grid κατηγοριών - ΔΙΑΤΑΞΗ 4 ΣΤΗΛΩΝ ΓΙΑ PC */
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+/* Responsive σπάσιμο για μικρότερες οθόνες */
+@media (max-width: 992px) {
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .categories-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Κάρτες κατηγοριών */
+.category {
+    border-radius: 10px;
+    padding: 14px 12px 12px;
+    background:
+        linear-gradient(145deg, rgba(35,74,115,0.95), rgba(10,24,44,0.98));
+    box-shadow:
+        0 10px 20px rgba(0,0,0,0.75),
+        0 0 0 1px rgba(5,10,25,0.85);
+    position: relative;
+    overflow: hidden;
+}
+
+.category::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 8px;
+    border: 1px solid rgba(193,212,227,0.14);
+    pointer-events: none;
+}
+
+.category h3 {
+    margin: 0 0 10px 0;
+    color: var(--nw-paper);
+    font-size: 0.95rem;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.category h3::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(241,215,161,0.7), rgba(193,212,227,0));
+}
+
+/* Λίστα checkboxes */
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-left: 4px;
+    padding-right: 2px;
+}
+
+/* Custom scrollbar για τη λίστα */
+.checkbox-list::-webkit-scrollbar {
+    width: 6px;
+}
+.checkbox-list::-webkit-scrollbar-track {
+    background: rgba(6,16,32,0.7);
+}
+.checkbox-list::-webkit-scrollbar-thumb {
+    background: rgba(193,212,227,0.6);
+    border-radius: 10px;
+}
+.checkbox-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(241,215,161,0.8);
+}
+
+.checkbox-item {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.88rem;
+    color: var(--nw-light-blue);
+}
+
+.checkbox-item label {
+    cursor: pointer;
+}
+
+/* Checkboxes */
+.checkbox-item input[type="checkbox"] {
+    margin: 0;
+    width: 15px;
+    height: 15px;
+    accent-color: var(--nw-red);
+}
+
+/* Εξωτερικοί σύνδεσμοι */
+.external-link {
+    color: var(--nw-accent);
+    text-decoration: none;
+    margin-left: 4px;
+    font-size: 0.9rem;
+}
+.external-link:hover {
+    text-decoration: underline;
+}
+/* Περιοχή αποτελεσμάτων */
+#results {
+    margin-top: 30px;
+}
+
+/* Πλαίσια με iframes */
+.iframe-container {
+    margin-bottom: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: var(--nw-paper);
+    box-shadow:
+        0 14px 24px rgba(0,0,0,0.8),
+        0 0 0 1px rgba(10,15,30,0.9);
+}
+
+.iframe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #e7e0d2, #f5f2ea);
+    border-bottom: 1px solid rgba(21,24,33,0.2);
+    font-size: 0.9rem;
+    color: var(--nw-ink-dark);
+}
+
+.iframe-header-title {
+    font-weight: bold;
+    letter-spacing: 0.04em;
+}
+
+/* Κουμπί πάνω από iframe */
+.open-tab-btn {
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(35,74,115,0.9);
+    background: linear-gradient(135deg, #294b72, #182c47);
+    color: #f7f7f7;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.open-tab-btn:hover {
+    background: linear-gradient(135deg, #3a628f, #1e385b);
+}
+.open-tab-btn:active {
+    transform: translateY(1px);
+}
+
+iframe {
+    width: 100%;
+    height: 500px;
+    border: none;
+    background: repeating-linear-gradient(
+        -8deg,
+        #e1e7f0,
+        #e1e7f0 2px,
+        #d0d8e4 2px,
+        #d0d8e4 4px
+    );
+}
+
+/* Μικρές κάρτες για λεξικά που ανοίγουν μόνο σε tab */
+.blocked-results-title {
+    margin-top: 30px;
+    font-weight: bold;
+    color: var(--nw-light-blue);
+    font-size: 0.95rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.blocked-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+@media (max-width: 800px) {
+    .blocked-grid {
+        grid-template-columns: repeat(2, minmax(0,1fr));
+    }
+}
+@media (max-width: 500px) {
+    .blocked-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.blocked-card {
+    border-radius: 8px;
+    padding: 8px 10px;
+    background: linear-gradient(135deg, #f5f2ea, #e2ddd2);
+    border: 1px dashed rgba(21,24,33,0.35);
+    font-size: 0.85rem;
+    color: var(--nw-ink-dark);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.45);
+}
+
+.blocked-name {
+    font-weight: bold;
+}
+
+.blocked-info {
+    color: #595959;
+    font-size: 0.8rem;
+}
+
+.blocked-btn {
+    align-self: flex-start;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 999px;
+    border: 1px solid rgba(35,74,115,0.9);
+    background: linear-gradient(135deg, #294b72, #182c47);
+    color: #f7f7f7;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+.blocked-btn:hover {
+    background: linear-gradient(135deg, #3a628f, #1e385b);
+}
+.blocked-btn:active {
+    transform: translateY(1px);
+}
+
+/* Footer Section */
+.footer {
+    text-align: right;
+    margin-top: 30px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(240,216,164,0.2);
+    font-size: 0.78rem;
+    color: var(--nw-footer-color);
+    letter-spacing: 0.05em;
+}
+
+    </style>
+</head>
+<body id="top">
+    <div class="header">
+        <h1>NeverWord</h1>
+        <p>Tracing the unseen threads of words</p>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Πληκτρολογήστε τη λέξη που ψάχνετε..." autocomplete="off">
+        <button id="searchBtn">🔍 Αναζήτηση</button>
+    </div>
+
+    <div id="errorMsg" class="error" style="display: none;"></div>
+
+    <div class="categories-grid">
+        <div class="category">
+            <h3>🌐 Bilingual</h3>
+            <div class="checkbox-list">
+                 <div class="checkbox-item">
+                    <input type="checkbox" id="wiki-en" value="https://www.wikipedia.org/wiki/WORD" data-dict-id="5">
+                    <label for="wiki-en">Wikipedia</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wr" value="https://www.wordreference.com/engr/WORD" data-dict-id="1">
+                    <label for="wr">WordReference</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="translatum-forum" value="https://www.translatum.gr/forum/?action=search2;search=WORD" data-dict-id="2">
+                    <label for="translatum-forum">Translatum Forum</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="lexilogia" data-dict-id="4">
+                    <label for="lexilogia">Lexilogia</label>
+                    <a href="https://www.lexilogia.gr/" target="_blank" class="external-link" title="Lexilogia.gr">🔗</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>🇬🇧 Αγγλικά</h3>
+            <div class="checkbox-list">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="cambridge" value="https://dictionary.cambridge.org/dictionary/english/WORD" data-dict-id="6">
+                    <label for="cambridge">Cambridge Dictionary</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="oxford" value="https://www.oed.com/search/dictionary/?scope=Entries&q=WORD&tl=true" data-dict-id="7">
+                    <label for="oxford">Oxford Dictionary</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="onelook" value="https://www.onelook.com/?w=WORD" data-dict-id="8">
+                    <label for="onelook">OneLook</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="merriam" value="https://www.merriam-webster.com/dictionary/WORD" data-dict-id="9">
+                    <label for="merriam">Merriam-Webster</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="iate" data-dict-id="10">
+                    <label for="iate">IATE</label>
+                    <a href="https://iate.europa.eu/home" target="_blank" class="external-link" title="IATE.europa.eu">🔗</a>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="thesaurus" value="https://www.thesaurus.com/browse/WORD" data-dict-id="11">
+                    <label for="thesaurus">Thesaurus.com</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="linguee" value="https://www.linguee.com/english-greek/search?source=auto&query=WORD" data-dict-id="12">
+                    <label for="linguee">Linguee</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="glosbe" value="https://glosbe.com/en/el/WORD" data-dict-id="13">
+                    <label for="glosbe">Glosbe</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="mymemory" value="https://mymemory.translated.net/en/English/Greek/WORD" data-dict-id="14">
+                    <label for="mymemory">MyMemory</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="proz" data-dict-id="15">
+                    <label for="proz">Proz</label>
+                    <a href="https://www.proz.com/" target="_blank" class="external-link" title="Proz.com">🔗</a>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="babelnet" value="https://babelnet.org/search?word=WORD&lang=EN&transLang=EL" data-dict-id="16">
+                    <label for="babelnet">BabelNet</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="babla" value="https://en.bab.la/dictionary/english-greek/WORD" data-dict-id="17">
+                    <label for="babla">bab.la</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="dictcom" value="https://dict.com/greek-english/WORD" data-dict-id="18">
+                    <label for="dictcom">Dict.com</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="urban" value="https://www.urbandictionary.com/define.php?term=WORD" data-dict-id="19">
+                    <label for="urban">Urban Dictionary</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>🇬🇷 Ελληνικά</h3>
+            <div class="checkbox-list">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="lexigram1" value="https://www.lexigram.gr/lex/enni/WORD" data-dict-id="22">
+                    <label for="lexigram1">Lexigram (Ετυμολογικό)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="lexigram2" value="https://www.lexigram.gr/lex/newg/WORD" data-dict-id="23">
+                    <label for="lexigram2">Lexigram (Νέα Ελληνικά)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="triantafyllides" value="https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/search.html?lq=WORD" data-dict-id="24">
+                    <label for="triantafyllides">Λεξικό Τριανταφυλλίδη</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="christiko" data-dict-id="25">
+                    <label for="christiko">Χρηστικό Λεξικό</label>
+                    <a href="https://christikolexiko.academyofathens.gr/" target="_blank" class="external-link" title="Χρηστικό Λεξικό">🔗</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>🔗 Collocations</h3>
+            <div class="checkbox-list">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="oxford-colloc" value="https://www.oxfordlearnersdictionaries.com/definition/collocations/WORD?q=WORD" data-dict-id="26">
+                    <label for="oxford-colloc">Oxford Collocations</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="ozdic" value="https://ozdic.com/collocation/WORD" data-dict-id="27">
+                    <label for="ozdic">Ozdic</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="wr-colloc" value="https://www.wordreference.com/englishcollocations/WORD" data-dict-id="28">
+                    <label for="wr-colloc">WordReference Collocations</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="hnc" data-dict-id="29">
+                    <label for="hnc">Εθνικός Θησαυρός</label>
+                    <a href="https://hnc.ilsp.gr" target="_blank" class="external-link" title="Εθνικός Θησαυρός">🔗</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="results"></div>
+
+    <div class="footer">
+        Made with ❤️ by Christine Vasileiadou
+    </div>
+
+    <script>
+        const searchBtn = document.getElementById('searchBtn');
+        const searchInput = document.getElementById('searchInput');
+        const errorMsg = document.getElementById('errorMsg');
+        const results = document.getElementById('results');
+        /* Αφαιρούμε το backToTop από το JS, καθώς αφαιρέθηκε από το HTML */
+
+        // IDs που ΔΕΝ φορτώνουν σε iframe (όπως μου έδωσες)
+        const BLOCKED_IDS = [1, 2, 4, 6, 7, 10, 11, 13, 14, 15, 17, 25, 26, 28, 29];
+
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') performSearch();
+        });
+
+        function performSearch() {
+            const term = searchInput.value.trim();
+            if (!term) {
+                showError('Παρακαλώ εισάγετε μια λέξη για αναζήτηση.');
+                return;
+            }
+
+            const selected = [];
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+            allCheckboxes.forEach(checkbox => {
+                const urlTemplate = checkbox.value;
+                const label = checkbox.nextElementSibling.textContent.trim();
+                const idAttr = checkbox.dataset.dictId;
+                if (urlTemplate && idAttr) {
+                    const dictId = parseInt(idAttr, 10);
+                    const searchUrl = urlTemplate.replace(/WORD/g, encodeURIComponent(term));
+                    selected.push({ id: dictId, label, url: searchUrl });
+                }
+            });
+
+            if (selected.length === 0) {
+                showError('Παρακαλώ επιλέξτε τουλάχιστον ένα λεξικό πριν κάνετε αναζήτηση.');
+                return;
+            }
+
+            displayResults(selected);
+            /* Αφαιρούμε τη γραμμή που εμφάνιζε το backToTop */
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayResults(dictionaries) {
+            results.innerHTML = '';
+
+            const embedList = [];
+            const blockedList = [];
+
+            dictionaries.forEach(dict => {
+                if (BLOCKED_IDS.includes(dict.id)) {  // Array.includes [web:161]
+                    blockedList.push(dict);
+                } else {
+                    embedList.push(dict);
+                }
+            });
+
+            // 1) Πρώτα τα κανονικά iframes
+            embedList.forEach((dict, index) => {
+                const container = document.createElement('div');
+                container.className = 'iframe-container';
+
+                const header = document.createElement('div');
+                header.className = 'iframe-header';
+
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'iframe-header-title';
+                titleSpan.textContent = (index + 1) + '. ' + dict.label;
+
+                const button = document.createElement('button');
+                button.className = 'open-tab-btn';
+                button.textContent = 'Άνοιγμα σε νέα καρτέλα';
+                button.addEventListener('click', () => {
+                    window.open(dict.url, '_blank', 'noopener');
+                });
+
+                header.appendChild(titleSpan);
+                header.appendChild(button);
+                container.appendChild(header);
+
+                const iframe = document.createElement('iframe');
+                iframe.src = dict.url;
+                iframe.title = dict.label;
+                iframe.style.opacity = '0';
+                iframe.onload = function () {
+                    iframe.style.opacity = '1';
+                };
+
+                container.appendChild(iframe);
+                results.appendChild(container);
+            });
+
+            // 2) Μετά, μικρές κάρτες για τα blocked στο τέλος
+            if (blockedList.length > 0) {
+                const title = document.createElement('div');
+                title.className = 'blocked-results-title';
+                title.textContent = 'Λεξικά που ανοίγουν μόνο σε νέα καρτέλα:';
+                results.appendChild(title);
+
+                const grid = document.createElement('div');
+                grid.className = 'blocked-grid';
+
+                blockedList.forEach(dict => {
+                    const card = document.createElement('div');
+                    card.className = 'blocked-card';
+
+                    const name = document.createElement('div');
+                    name.className = 'blocked-name';
+                    name.textContent = dict.label;
+
+                    const info = document.createElement('div');
+                    info.className = 'blocked-info';
+                    info.textContent = 'Αυτό το λεξικό δεν μπορεί να ενσωματωθεί στη σελίδα (iframe).';
+
+                    const btn = document.createElement('button');
+                    btn.className = 'blocked-btn';
+                    btn.textContent = 'Άνοιγμα σε νέα καρτέλα';
+                    btn.addEventListener('click', () => {
+                        window.open(dict.url, '_blank', 'noopener');
+                    });
+
+                    card.appendChild(name);
+                    card.appendChild(info);
+                    card.appendChild(btn);
+                    grid.appendChild(card);
+                });
+
+                results.appendChild(grid);
+            }
+        }
+
+        function showError(message) {
+            errorMsg.textContent = message;
+            errorMsg.style.display = 'block';
+            setTimeout(() => {
+                errorMsg.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
