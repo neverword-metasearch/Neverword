@@ -149,7 +149,7 @@ body {
     font-size: 0.9rem;
 }
 
-/* Grid κατηγοριών - ΔΙΑΤΑΞΗ 4 ΣΤΗΛΩΝ ΓΙΑ PC */
+/* Grid κατηγοριών - ΔΙΑΤΑΞΗ 3 ΣΤΗΛΩΝ ΓΙΑ PC */
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -439,16 +439,11 @@ iframe {
                     <input type="checkbox" id="translatum-forum" value="https://www.translatum.gr/forum/?action=search2;search=WORD" data-dict-id="2">
                     <label for="translatum-forum">Translatum Forum</label>
                 </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="lexilogia" data-dict-id="4">
-                    <label for="lexilogia">Lexilogia</label>
-                    <a href="https://www.lexilogia.gr/" target="_blank" class="external-link" title="Lexilogia.gr">🔗</a>
-                </div>
             </div>
         </div>
 
         <div class="category">
-            <h3>🇬🇧 Αγγλικά</h3>
+            <h3>🇬🇧 English</h3>
             <div class="checkbox-list">
                 <div class="checkbox-item">
                     <input type="checkbox" id="cambridge" value="https://dictionary.cambridge.org/dictionary/english/WORD" data-dict-id="6">
@@ -467,11 +462,6 @@ iframe {
                     <label for="merriam">Merriam-Webster</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="iate" data-dict-id="10">
-                    <label for="iate">IATE</label>
-                    <a href="https://iate.europa.eu/home" target="_blank" class="external-link" title="IATE.europa.eu">🔗</a>
-                </div>
-                <div class="checkbox-item">
                     <input type="checkbox" id="thesaurus" value="https://www.thesaurus.com/browse/WORD" data-dict-id="11">
                     <label for="thesaurus">Thesaurus.com</label>
                 </div>
@@ -486,11 +476,6 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="mymemory" value="https://mymemory.translated.net/en/English/Greek/WORD" data-dict-id="14">
                     <label for="mymemory">MyMemory</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="proz" data-dict-id="15">
-                    <label for="proz">Proz</label>
-                    <a href="https://www.proz.com/" target="_blank" class="external-link" title="Proz.com">🔗</a>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="babelnet" value="https://babelnet.org/search?word=WORD&lang=EN&transLang=EL" data-dict-id="16">
@@ -519,17 +504,8 @@ iframe {
                     <label for="lexigram1">Lexigram (Ετυμολογικό)</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="lexigram2" value="https://www.lexigram.gr/lex/newg/WORD" data-dict-id="23">
-                    <label for="lexigram2">Lexigram (Νέα Ελληνικά)</label>
-                </div>
-                <div class="checkbox-item">
                     <input type="checkbox" id="triantafyllides" value="https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/search.html?lq=WORD" data-dict-id="24">
                     <label for="triantafyllides">Λεξικό Τριανταφυλλίδη</label>
-                </div>
-                <div class="checkbox-item">
-                    <input type="checkbox" id="christiko" data-dict-id="25">
-                    <label for="christiko">Χρηστικό Λεξικό</label>
-                    <a href="https://christikolexiko.academyofathens.gr/" target="_blank" class="external-link" title="Χρηστικό Λεξικό">🔗</a>
                 </div>
             </div>
         </div>
@@ -538,10 +514,6 @@ iframe {
             <h3>🔗 Collocations</h3>
             <div class="checkbox-list">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="oxford-colloc" value="https://www.oxfordlearnersdictionaries.com/definition/collocations/WORD?q=WORD" data-dict-id="26">
-                    <label for="oxford-colloc">Oxford Collocations</label>
-                </div>
-                <div class="checkbox-item">
                     <input type="checkbox" id="ozdic" value="https://ozdic.com/collocation/WORD" data-dict-id="27">
                     <label for="ozdic">Ozdic</label>
                 </div>
@@ -549,19 +521,76 @@ iframe {
                     <input type="checkbox" id="wr-colloc" value="https://www.wordreference.com/englishcollocations/WORD" data-dict-id="28">
                     <label for="wr-colloc">WordReference Collocations</label>
                 </div>
+            </div>
+        </div>
+        
+        <div class="category">
+            <h3>Technical Terms</h3>
+            <div class="checkbox-list">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="hnc" data-dict-id="29">
-                    <label for="hnc">Εθνικός Θησαυρός</label>
-                    <a href="https://hnc.ilsp.gr" target="_blank" class="external-link" title="Εθνικός Θησαυρός">🔗</a>
+                    <input type="checkbox" id="IATE" value="https://new.iate.europa.eu/search/search-by-url?term=WORD&sl=en&tl=el%2Cen%2Cla%2Cmul&fields=0&matching=1&type=0,1,2,3,4&target_reliability=1,2,3,4&primarity=0,1&evaluation=-1,0,1,2,3,4" data-dict-id="30">
+                    <label for="IATE">IATE (EN -> GR)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="IATE2" value="https://new.iate.europa.eu/search/search-by-url?term=WORD&sl=el&tl=en%2Cen%2Cla%2Cmul&fields=0&matching=1&type=0,1,2,3,4&target_reliability=1,2,3,4&primarity=0,1&evaluation=-1,0,1,2,3,4" data-dict-id="31">
+                    <label for="IATE2">IATE (GR -> EN)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="TechDico" value="https://el.techdico.com/%CE%BC%CE%B5%CF%84%CE%AC%CF%86%CF%81%CE%B1%CF%83%CE%B7/%CE%B1%CE%B3%CE%B3%CE%BB%CE%B9%CE%BA%CE%AC-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC/WORD.html" data-dict-id="32">
+                    <label for="TechDico">Tech Dico (EN -> GR)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="TechDico2" value="https://el.techdico.com/%CE%BC%CE%B5%CF%84%CE%AC%CF%86%CF%81%CE%B1%CF%83%CE%B7/%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC-%CE%B1%CE%B3%CE%B3%CE%BB%CE%B9%CE%BA%CE%AC/%CE%BC%CE%B7%CF%87%CE%B1%CE%BD%CE%AE.html" data-dict-id="33">
+                    <label for="TechDico2">Tech Dico (GR -> EN)</label>
                 </div>
             </div>
         </div>
+    
+        <div class="category">
+            <h3>European Union Law</h3>
+            <div class="checkbox-list">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="EUR-LEX" value="https://eur-lex.europa.eu/search.html?scope=EURLEX&text=WORD&lang=el&type=quick&qid=1765462498139" data-dict-id="34">
+                    <label for="EUR-LEX">Eur Lex (EN)</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="EUR-LEX2" value="https://eur-lex.europa.eu/search.html?lang=el&text=WORD&qid=1765466408255&type=quick&scope=EURLEX&locale=en" data-dict-id="35">
+                    <label for="EUR-LEX2">Eur Lex (GR)</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h3>Χρήσιμα links</h3>
+            <div class="list">
+            <label for="christiko">Χρηστικό Λεξικό</label>
+            <a href="https://christikolexiko.academyofathens.gr/" target="_blank" class="external-link" title="Χρηστικό Λεξικό">🔗</a>
+                </div>
+            <div class="list">
+            <label for="lexilogia">Lexilogia</label>
+            <a href="https://www.lexilogia.gr/" target="_blank" class="external-link" title="Lexilogia – Bilingual Queries">🔗</a>
+                </div>
+            <div class="list">
+            <label for="ethnikos">Εθνικός Θησαυρός</label>
+            <a href="https://hnc.ilsp.gr/" target="_blank" class="external-link" title="Εθνικός Θησαυρός – Δόκιμες Συνάψεις">🔗</a>
+                </div>
+            <div class="list">
+            <label for="forvo">Forvo</label>
+            <a href="https://forvo.com/" target="_blank" class="external-link" title="Forvo – The Pronunciation Dictionary">🔗</a>
+                </div>
+            <div class="list">
+            <label for="wayback">Wayback Machine</label>
+            <a href="https://web.archive.org/" target="_blank" class="external-link" title="Wayback Machine – Internet Archive">🔗</a>
+                </div>
+            </div>
+        </div>   
     </div>
 
     <div id="results"></div>
 
     <div class="footer">
-        Made with ❤️ by Christine Vasileiadou
+        Made with ❤️ for meta|φραση 
+		by Christine Vasileiadou, 2025
     </div>
 
     <script>
