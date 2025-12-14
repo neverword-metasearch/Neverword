@@ -674,57 +674,54 @@ iframe {
     const searchAllGrBtn = document.getElementById('searchAllGrBtn');
     const clearAllBtn = document.getElementById('clearAllBtn');
 
-    // IDs που ΔΕΝ φορτώνουν σε iframe (όπως μου έδωσες)
+    // IDs που ΔΕΝ φορτώνουν σε iframe
     const BLOCKED_IDS = [1, 2, 4, 6, 7, 8, 10, 11, 13, 14, 15, 17, 24, 25, 26, 28, 29, 34, 35, 40];
 
-    // ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ IDs ΓΙΑ ΤΑ ΝΕΑ ΚΟΥΜΠΙΑ
-    // Bilingual: 5, 1, 2
-    // English: 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19
-    // Collocations (English): 27, 28
-    // Technical Terms (EN): 30, 32
-    // EU Law (EN): 34
-    // Greek: 22, 24
-    // Technical Terms (GR): 31, 33
-    // EU Law (GR): 35
-
-    // IDs για Αγγλικά (Bilingual + English + Collocations + Technical EN + EU Law EN)
     const ENGLISH_IDS = [5, 1, 2, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 27, 28, 30, 32, 34, 40];
-    // IDs για Ελληνικά (Bilingual + Greek + Technical GR + EU Law GR)
     const GREEK_IDS = [5, 1, 2, 22, 24, 31, 33, 35];
 
-    // -- Helper για save/restore scroll --
+    // -- Scroll persistence config --
     const SCROLL_KEY = 'nw_scrollY';
+
+    // Tell browser we will manage scroll restoration (if supported)
+    try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { /* ignore */ }
 
     function saveScrollPosition() {
         try {
             sessionStorage.setItem(SCROLL_KEY, String(window.scrollY || 0));
-        } catch (e) {
-            // ignore if storage not available
-        }
+        } catch (e) { /* ignore storage errors */ }
     }
 
     function restoreScrollPosition() {
         try {
-            const v = sessionStorage.getItem(SCROLL_KEY);
-            if (v !== null) {
-                const y = parseInt(v, 10);
-                if (!isNaN(y)) {
-                    // μικρό timeout για να σιγουρευτούμε ότι έχει τελειώσει τυχ. rendering
-                    setTimeout(() => { window.scrollTo(0, y); }, 10);
-                }
-                sessionStorage.removeItem(SCROLL_KEY);
-            }
+            const raw = sessionStorage.getItem(SCROLL_KEY);
+            if (raw === null) return;
+            const y = parseInt(raw, 10);
+            if (isNaN(y)) return;
+            // ensure layout finished — use rAF and small timeout
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    try { window.scrollTo(0, y); } catch (e) { /* ignore */ }
+                    // remove the stored value shortly after restore to avoid stale restores
+                    try { sessionStorage.removeItem(SCROLL_KEY); } catch (e) { /* ignore */ }
+                }, 30);
+            });
         } catch (e) { /* ignore */ }
     }
 
-    // restore όταν η σελίδα "εμφανίζεται" (pageshow καλύπτει και BFCache cases)
+    // restore on pageshow (covers BFCache cases) and when tab becomes visible
     window.addEventListener('pageshow', restoreScrollPosition);
-    // safety: αν η καρτέλα γίνει visible
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') restoreScrollPosition();
     });
 
-    // ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΤΑ ΝΕΑ ΚΟΥΜΠΙΑ
+    // save when the page loses visibility or focus (covers middle-click / context-menu opens)
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') saveScrollPosition();
+    });
+    window.addEventListener('blur', () => { saveScrollPosition(); });
+
+    // functions for checkbox toggles (unchanged logic)
     function toggleCheckboxes(ids, forceState = null) {
         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
         allCheckboxes.forEach(checkbox => {
@@ -735,25 +732,11 @@ iframe {
         });
     }
 
-    function selectAllEnglish() {
-        // Πρώτα καθαρίζουμε όλα τα checkboxes
-        clearAll();
-        // Μετά επιλέγουμε τα αγγλικά
-        toggleCheckboxes(ENGLISH_IDS, true);
-    }
-
-    function selectAllGreek() {
-        // Πρώτα καθαρίζουμε όλα τα checkboxes
-        clearAll();
-        // Μετά επιλέγουμε τα ελληνικά
-        toggleCheckboxes(GREEK_IDS, true);
-    }
-
+    function selectAllEnglish() { clearAll(); toggleCheckboxes(ENGLISH_IDS, true); }
+    function selectAllGreek() { clearAll(); toggleCheckboxes(GREEK_IDS, true); }
     function clearAll() {
         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
-        allCheckboxes.forEach(checkbox => {
-            checkbox.checked = false;
-        });
+        allCheckboxes.forEach(checkbox => { checkbox.checked = false; });
     }
 
     // EVENT LISTENERS
@@ -765,7 +748,6 @@ iframe {
     searchAllEnBtn.addEventListener('click', selectAllEnglish);
     searchAllGrBtn.addEventListener('click', selectAllGreek);
     clearAllBtn.addEventListener('click', clearAll);
-
 
     function performSearch() {
         const term = searchInput.value.trim();
@@ -794,7 +776,7 @@ iframe {
         }
 
         displayResults(selected);
-        /* Αφαιρούμε τη γραμμή που εμφάνιζε το backToTop */
+        // keep previous behavior (scroll to results)
         results.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -805,14 +787,11 @@ iframe {
         const blockedList = [];
 
         dictionaries.forEach(dict => {
-            if (BLOCKED_IDS.includes(dict.id)) {  // Array.includes [web:161]
-                blockedList.push(dict);
-            } else {
-                embedList.push(dict);
-            }
+            if (BLOCKED_IDS.includes(dict.id)) blockedList.push(dict);
+            else embedList.push(dict);
         });
 
-        // 1) Πρώτα τα κανονικά iframes
+        // embed iframes
         embedList.forEach((dict, index) => {
             const container = document.createElement('div');
             container.className = 'iframe-container';
@@ -828,9 +807,9 @@ iframe {
             button.className = 'open-tab-btn';
             button.textContent = 'Άνοιγμα σε νέα καρτέλα';
             button.addEventListener('click', () => {
-                // αποθηκεύουμε το scroll πριν ανοίξουμε νέο tab
+                // main save point
                 saveScrollPosition();
-                // άνοιγμα νέας καρτέλας όπως πριν
+                // open new tab as before
                 window.open(dict.url, '_blank', 'noopener');
             });
 
@@ -842,15 +821,13 @@ iframe {
             iframe.src = dict.url;
             iframe.title = dict.label;
             iframe.style.opacity = '0';
-            iframe.onload = function () {
-                iframe.style.opacity = '1';
-            };
+            iframe.onload = function () { iframe.style.opacity = '1'; };
 
             container.appendChild(iframe);
             results.appendChild(container);
         });
 
-        // 2) Μετά, μικρές κάρτες για τα blocked στο τέλος
+        // blocked cards
         if (blockedList.length > 0) {
             const title = document.createElement('div');
             title.className = 'blocked-results-title';
@@ -876,7 +853,7 @@ iframe {
                 btn.className = 'blocked-btn';
                 btn.textContent = 'Άνοιγμα σε νέα καρτέλα';
                 btn.addEventListener('click', () => {
-                    // αποθηκεύουμε το scroll πριν ανοίξουμε νέο tab
+                    // main save point
                     saveScrollPosition();
                     window.open(dict.url, '_blank', 'noopener');
                 });
@@ -894,9 +871,7 @@ iframe {
     function showError(message) {
         errorMsg.textContent = message;
         errorMsg.style.display = 'block';
-        setTimeout(() => {
-            errorMsg.style.display = 'none';
-        }, 5000);
+        setTimeout(() => { errorMsg.style.display = 'none'; }, 5000);
     }
 </script>
 </body>
