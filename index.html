@@ -79,6 +79,40 @@ body {
     margin-bottom: 26px;
 }
 
+/* ΝΕΑ: Στυλ για τα μικρά κουμπιά */
+.selection-button {
+    padding: 11px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(193,212,227,0.6);
+    background: rgba(35,74,115,0.8);
+    color: var(--nw-paper);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    box-shadow:
+        0 5px 10px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(0,0,0,0.9);
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, background 0.1s ease-out;
+    white-space: nowrap; /* Αποφυγή σπασίματος σε δύο γραμμές */
+}
+
+.selection-button:hover {
+    transform: translateY(-1px);
+    background: rgba(35,74,115,1);
+    box-shadow:
+        0 7px 14px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(0,0,0,0.9);
+}
+
+.selection-button:active {
+    transform: translateY(1px);
+    box-shadow:
+        0 4px 8px rgba(0,0,0,0.7),
+        0 0 0 1px rgba(0,0,0,0.9);
+}
+/* Τέλος ΝΕΑ */
+
 #searchInput {
     width: min(420px, 100%);
     padding: 11px 12px;
@@ -137,6 +171,35 @@ body {
         0 4px 8px rgba(0,0,0,0.7),
         0 0 0 1px rgba(0,0,0,0.9);
 }
+
+/* Media Query για τα κουμπιά */
+@media (max-width: 1050px) {
+    .search-container {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .selection-button {
+        padding: 8px 10px;
+        font-size: 0.75rem;
+    }
+    #searchInput {
+        order: 1; /* Αναγκάζει το input να είναι στην πρώτη "γραμμή" */
+        flex-grow: 1;
+    }
+    #searchBtn {
+        order: 2; /* Αναγκάζει το κουμπί Αναζήτηση να είναι στη δεύτερη "γραμμή" */
+    }
+}
+@media (max-width: 600px) {
+    .search-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .selection-button {
+        width: 100%;
+    }
+}
+
 
 /* Μήνυμα σφάλματος */
 .error {
@@ -417,6 +480,9 @@ iframe {
     </div>
 
     <div class="search-container">
+        <button id="searchAllEnBtn" class="selection-button">Search all (EN)</button>
+        <button id="searchAllGrBtn" class="selection-button">Search all (GR)</button>
+        <button id="clearAllBtn" class="selection-button">Clear all</button>
         <input type="text" id="searchInput" placeholder="Πληκτρολογήστε τη λέξη που ψάχνετε..." autocomplete="off">
         <button id="searchBtn">🔍 Αναζήτηση</button>
     </div>
@@ -463,7 +529,11 @@ iframe {
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="thesaurus" value="https://www.thesaurus.com/browse/WORD" data-dict-id="11">
-                    <label for="thesaurus">Thesaurus.com</label>
+                    <label for="thesaurus">Thesaurus</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="powerthesaurus" value="https://www.powerthesaurus.org/WORD/synonyms" data-dict-id="40">
+                    <label for="powerthesaurus">Power Thesaurus</label>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="linguee" value="https://www.linguee.com/english-greek/search?source=auto&query=WORD" data-dict-id="12">
@@ -523,7 +593,7 @@ iframe {
                 </div>
             </div>
         </div>
-        
+
         <div class="category">
             <h3>Technical Terms</h3>
             <div class="checkbox-list">
@@ -545,7 +615,7 @@ iframe {
                 </div>
             </div>
         </div>
-    
+
         <div class="category">
             <h3>European Union Law</h3>
             <div class="checkbox-list">
@@ -583,13 +653,13 @@ iframe {
             <a href="https://web.archive.org/" target="_blank" class="external-link" title="Wayback Machine – Internet Archive">🔗</a>
                 </div>
             </div>
-        </div>   
+        </div>
     </div>
 
     <div id="results"></div>
 
     <div class="footer">
-        Made with ❤️ for meta|φραση 
+        Made with ❤️ for meta|φραση
 		by Christine Vasileiadou, 2025
     </div>
 
@@ -598,15 +668,72 @@ iframe {
         const searchInput = document.getElementById('searchInput');
         const errorMsg = document.getElementById('errorMsg');
         const results = document.getElementById('results');
-        /* Αφαιρούμε το backToTop από το JS, καθώς αφαιρέθηκε από το HTML */
+
+        // ΝΕΕΣ ΑΝΑΦΟΡΕΣ ΚΟΥΜΠΙΩΝ
+        const searchAllEnBtn = document.getElementById('searchAllEnBtn');
+        const searchAllGrBtn = document.getElementById('searchAllGrBtn');
+        const clearAllBtn = document.getElementById('clearAllBtn');
 
         // IDs που ΔΕΝ φορτώνουν σε iframe (όπως μου έδωσες)
-        const BLOCKED_IDS = [1, 2, 4, 6, 7, 10, 11, 13, 14, 15, 17, 25, 26, 28, 29];
+        const BLOCKED_IDS = [1, 2, 4, 6, 7, 8, 10, 11, 13, 14, 15, 17, 24, 25, 26, 28, 29, 34, 35, 40];
 
+        // ΚΑΤΗΓΟΡΙΟΠΟΙΗΣΗ IDs ΓΙΑ ΤΑ ΝΕΑ ΚΟΥΜΠΙΑ
+        // Bilingual: 5, 1, 2
+        // English: 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19
+        // Collocations (English): 27, 28
+        // Technical Terms (EN): 30, 32
+        // EU Law (EN): 34
+        // Greek: 22, 24
+        // Technical Terms (GR): 31, 33
+        // EU Law (GR): 35
+
+        // IDs για Αγγλικά (Bilingual + English + Collocations + Technical EN + EU Law EN)
+        const ENGLISH_IDS = [5, 1, 2, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 27, 28, 30, 32, 34, 40];
+        // IDs για Ελληνικά (Bilingual + Greek + Technical GR + EU Law GR)
+        const GREEK_IDS = [5, 1, 2, 22, 24, 31, 33, 35];
+
+        // ΣΥΝΑΡΤΗΣΕΙΣ ΓΙΑ ΤΑ ΝΕΑ ΚΟΥΜΠΙΑ
+        function toggleCheckboxes(ids, forceState = null) {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            allCheckboxes.forEach(checkbox => {
+                const dictId = parseInt(checkbox.dataset.dictId, 10);
+                if (ids.includes(dictId)) {
+                    checkbox.checked = forceState !== null ? forceState : !checkbox.checked;
+                }
+            });
+        }
+
+        function selectAllEnglish() {
+            // Πρώτα καθαρίζουμε όλα τα checkboxes
+            clearAll();
+            // Μετά επιλέγουμε τα αγγλικά
+            toggleCheckboxes(ENGLISH_IDS, true);
+        }
+
+        function selectAllGreek() {
+            // Πρώτα καθαρίζουμε όλα τα checkboxes
+            clearAll();
+            // Μετά επιλέγουμε τα ελληνικά
+            toggleCheckboxes(GREEK_IDS, true);
+        }
+
+        function clearAll() {
+            const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+            allCheckboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        }
+
+        // EVENT LISTENERS
         searchBtn.addEventListener('click', performSearch);
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') performSearch();
         });
+
+        searchAllEnBtn.addEventListener('click', selectAllEnglish);
+        searchAllGrBtn.addEventListener('click', selectAllGreek);
+        clearAllBtn.addEventListener('click', clearAll);
+
 
         function performSearch() {
             const term = searchInput.value.trim();
@@ -737,3 +864,4 @@ iframe {
     </script>
 </body>
 </html>
+
