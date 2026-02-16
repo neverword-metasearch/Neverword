@@ -10,11 +10,23 @@
     --nw-deep-blue: #0f2740;
     --nw-mid-blue:  #234a73;
     --nw-light-blue:#c1d4e3;
-    --nw-paper:     #f5f2ea;
+    --nw-paper:      #f5f2ea;
     --nw-ink-dark:  #151821;
-    --nw-red:       #c73536;
+    --nw-red:        #c73536;
     --nw-accent:    #f0d8a4; /* Χρυσό/Κίτρινο για έμφαση */
     --nw-footer-color: #d1b473; /* Ελαφρώς πιο ζεστό χρυσό για το footer */
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+    --nw-deep-blue: #050a12;
+    --nw-mid-blue:  #0a1420;
+    --nw-light-blue:#7a8ea3;
+    --nw-paper:      #b8b8b8;
+    --nw-ink-dark:  #e8e8e8;
+    --nw-red:        #d64546;
+    --nw-accent:    #d4b87a;
+    --nw-footer-color: #a89560;
 }
 
 /* Γενικό φόντο & κείμενο */
@@ -25,6 +37,11 @@ body {
     padding: 24px 16px 100px;
     background: radial-gradient(circle at top, #233f63 0%, var(--nw-deep-blue) 55%, #050810 100%);
     color: var(--nw-paper);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+    background: radial-gradient(circle at top, #0a1420 0%, #020408 55%, #000000 100%);
 }
 
 /* Κεφαλίδα */
@@ -41,6 +58,13 @@ body {
     overflow: hidden;
 }
 
+body.dark-mode .header {
+    background: linear-gradient(135deg, rgba(5,10,18,0.98), rgba(8,16,28,0.99));
+    box-shadow:
+        0 14px 26px rgba(0,0,0,0.85),
+        0 0 0 1px rgba(0,0,0,0.95);
+}
+
 .header::before {
     content: "";
     position: absolute;
@@ -48,6 +72,10 @@ body {
     border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.08);
     pointer-events: none;
+}
+
+body.dark-mode .header::before {
+    border: 1px solid rgba(255,255,255,0.04);
 }
 
 .header h1 {
@@ -69,6 +97,59 @@ body {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--nw-accent);
+}
+
+/* Dark Mode Toggle Switch */
+.theme-toggle {
+    position: absolute;
+    top: 18px;
+    right: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+}
+
+.theme-toggle-label {
+    font-size: 0.75rem;
+    color: var(--nw-light-blue);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 24px;
+    background: rgba(35,74,115,0.8);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    border: 1px solid rgba(193,212,227,0.4);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+body.dark-mode .toggle-switch {
+    background: rgba(10,20,32,0.9);
+    border: 1px solid rgba(122,142,163,0.3);
+}
+
+.toggle-switch::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #f5f2ea, #e2ddd2);
+    border-radius: 50%;
+    transition: transform 0.3s ease, background 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .toggle-switch::before {
+    transform: translateX(26px);
+    background: linear-gradient(135deg, #4a5568, #2d3748);
 }
 
 /* Περιοχή αναζήτησης */
@@ -94,7 +175,12 @@ body {
         0 5px 10px rgba(0,0,0,0.6),
         0 0 0 1px rgba(0,0,0,0.9);
     transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, background 0.1s ease-out;
-    white-space: nowrap; /* Αποφυγή σπασίματος σε δύο γραμμές */
+    white-space: nowrap;
+}
+
+body.dark-mode .selection-button {
+    background: rgba(10,20,32,0.9);
+    border: 1px solid rgba(122,142,163,0.4);
 }
 
 .selection-button:hover {
@@ -105,13 +191,16 @@ body {
         0 0 0 1px rgba(0,0,0,0.9);
 }
 
+body.dark-mode .selection-button:hover {
+    background: rgba(15,30,48,1);
+}
+
 .selection-button:active {
     transform: translateY(1px);
     box-shadow:
         0 4px 8px rgba(0,0,0,0.7),
         0 0 0 1px rgba(0,0,0,0.9);
 }
-/* Τέλος ΝΕΑ */
 
 #searchInput {
     width: min(420px, 100%);
@@ -126,9 +215,18 @@ body {
         0 6px 14px rgba(0,0,0,0.6);
 }
 
+body.dark-mode #searchInput {
+    background: rgba(3,8,15,0.95);
+    border: 1px solid rgba(212,184,122,0.4);
+}
+
 #searchInput::placeholder {
     color: rgba(193,212,227,0.6);
     font-style: italic;
+}
+
+body.dark-mode #searchInput::placeholder {
+    color: rgba(122,142,163,0.5);
 }
 
 #searchInput:focus {
@@ -157,6 +255,10 @@ body {
                 background 0.1s ease-out;
 }
 
+body.dark-mode #searchBtn {
+    background: linear-gradient(135deg, #a12329, var(--nw-red));
+}
+
 #searchBtn:hover {
     transform: translateY(-1px);
     background: linear-gradient(135deg, #b52b31, var(--nw-red));
@@ -183,11 +285,11 @@ body {
         font-size: 0.75rem;
     }
     #searchInput {
-        order: 1; /* Αναγκάζει το input να είναι στην πρώτη "γραμμή" */
+        order: 1;
         flex-grow: 1;
     }
     #searchBtn {
-        order: 2; /* Αναγκάζει το κουμπί Αναζήτηση να είναι στη δεύτερη "γραμμή" */
+        order: 2;
     }
 }
 @media (max-width: 600px) {
@@ -198,8 +300,14 @@ body {
     .selection-button {
         width: 100%;
     }
+    .theme-toggle {
+        top: 10px;
+        right: 8px;
+    }
+    .theme-toggle-label {
+        display: none;
+    }
 }
-
 
 /* Μήνυμα σφάλματος */
 .error {
@@ -212,7 +320,13 @@ body {
     font-size: 0.9rem;
 }
 
-/* Grid κατηγοριών - ΔΙΑΤΑΞΗ 3 ΣΤΗΛΩΝ ΓΙΑ PC */
+body.dark-mode .error {
+    color: #ffd7d7;
+    background: rgba(80,20,20,0.9);
+    border: 1px solid rgba(214,69,70,0.7);
+}
+
+/* Grid κατηγοριών */
 .categories-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -220,7 +334,6 @@ body {
     margin-bottom: 20px;
 }
 
-/* Responsive σπάσιμο για μικρότερες οθόνες */
 @media (max-width: 992px) {
     .categories-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -246,6 +359,14 @@ body {
     overflow: hidden;
 }
 
+body.dark-mode .category {
+    background:
+        linear-gradient(145deg, rgba(10,20,32,0.98), rgba(3,8,15,0.99));
+    box-shadow:
+        0 10px 20px rgba(0,0,0,0.9),
+        0 0 0 1px rgba(0,0,0,0.95);
+}
+
 .category::before {
     content: "";
     position: absolute;
@@ -253,6 +374,10 @@ body {
     border-radius: 8px;
     border: 1px solid rgba(193,212,227,0.14);
     pointer-events: none;
+}
+
+body.dark-mode .category::before {
+    border: 1px solid rgba(122,142,163,0.08);
 }
 
 .category h3 {
@@ -273,6 +398,10 @@ body {
     background: linear-gradient(to right, rgba(241,215,161,0.7), rgba(193,212,227,0));
 }
 
+body.dark-mode .category h3::after {
+    background: linear-gradient(to right, rgba(212,184,122,0.5), rgba(122,142,163,0));
+}
+
 /* Λίστα checkboxes */
 .checkbox-list {
     max-height: 200px;
@@ -281,19 +410,32 @@ body {
     padding-right: 2px;
 }
 
-/* Custom scrollbar για τη λίστα */
 .checkbox-list::-webkit-scrollbar {
     width: 6px;
 }
 .checkbox-list::-webkit-scrollbar-track {
     background: rgba(6,16,32,0.7);
 }
+
+body.dark-mode .checkbox-list::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.8);
+}
+
 .checkbox-list::-webkit-scrollbar-thumb {
     background: rgba(193,212,227,0.6);
     border-radius: 10px;
 }
+
+body.dark-mode .checkbox-list::-webkit-scrollbar-thumb {
+    background: rgba(122,142,163,0.5);
+}
+
 .checkbox-list::-webkit-scrollbar-thumb:hover {
     background: rgba(241,215,161,0.8);
+}
+
+body.dark-mode .checkbox-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(212,184,122,0.7);
 }
 
 .checkbox-item {
@@ -307,9 +449,9 @@ body {
 
 .checkbox-item label {
     cursor: pointer;
+    flex: 1;
 }
 
-/* Checkboxes */
 .checkbox-item input[type="checkbox"] {
     margin: 0;
     width: 15px;
@@ -327,6 +469,7 @@ body {
 .external-link:hover {
     text-decoration: underline;
 }
+
 /* Περιοχή αποτελεσμάτων */
 #results {
     margin-top: 30px;
@@ -343,6 +486,13 @@ body {
         0 0 0 1px rgba(10,15,30,0.9);
 }
 
+body.dark-mode .iframe-container {
+    background: #1a1a1a;
+    box-shadow:
+        0 14px 24px rgba(0,0,0,0.95),
+        0 0 0 1px rgba(0,0,0,0.98);
+}
+
 .iframe-header {
     display: flex;
     justify-content: space-between;
@@ -354,12 +504,17 @@ body {
     color: var(--nw-ink-dark);
 }
 
+body.dark-mode .iframe-header {
+    background: linear-gradient(135deg, #252525, #1a1a1a);
+    border-bottom: 1px solid rgba(232,232,232,0.15);
+    color: var(--nw-ink-dark);
+}
+
 .iframe-header-title {
     font-weight: bold;
     letter-spacing: 0.04em;
 }
 
-/* Κουμπί πάνω από iframe */
 .open-tab-btn {
     padding: 4px 10px;
     font-size: 0.8rem;
@@ -371,9 +526,20 @@ body {
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
+
+body.dark-mode .open-tab-btn {
+    background: linear-gradient(135deg, #1a3050, #0f1c2f);
+    border: 1px solid rgba(122,142,163,0.6);
+}
+
 .open-tab-btn:hover {
     background: linear-gradient(135deg, #3a628f, #1e385b);
 }
+
+body.dark-mode .open-tab-btn:hover {
+    background: linear-gradient(135deg, #234060, #152840);
+}
+
 .open-tab-btn:active {
     transform: translateY(1px);
 }
@@ -389,6 +555,149 @@ iframe {
         #d0d8e4 2px,
         #d0d8e4 4px
     );
+}
+
+body.dark-mode iframe {
+    background: repeating-linear-gradient(
+        -8deg,
+        #1a1a1a,
+        #1a1a1a 2px,
+        #0f0f0f 2px,
+        #0f0f0f 4px
+    );
+}
+
+/* Note Icon Styles */
+.note-icon {
+    cursor: pointer;
+    font-size: 0.9rem;
+    opacity: 0.4;
+    transition: opacity 0.2s, transform 0.2s;
+    display: inline-block;
+    user-select: none;
+}
+
+.note-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.note-icon.has-note {
+    opacity: 1;
+    color: var(--nw-accent);
+}
+
+body.dark-mode .note-icon.has-note {
+    color: var(--nw-accent);
+}
+
+/* Note Modal Styles */
+.note-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.note-modal.active {
+    display: flex;
+}
+
+.note-modal-content {
+    background: var(--nw-paper);
+    color: var(--nw-ink-dark);
+    padding: 24px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.9);
+}
+
+body.dark-mode .note-modal-content {
+    background: #1a1a1a;
+    color: var(--nw-paper);
+}
+
+.note-modal-content h3 {
+    margin: 0 0 16px 0;
+    color: var(--nw-red);
+    font-size: 1.1rem;
+}
+
+.note-modal-content textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+body.dark-mode .note-modal-content textarea {
+    background: #252525;
+    color: var(--nw-paper);
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.note-modal-content textarea:focus {
+    outline: none;
+    border-color: var(--nw-accent);
+}
+
+.note-modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: flex-end;
+}
+
+.note-modal-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.1s, background 0.2s;
+}
+
+.note-modal-buttons button:active {
+    transform: translateY(1px);
+}
+
+#saveNote {
+    background: var(--nw-red);
+    color: white;
+}
+
+#saveNote:hover {
+    background: #a82b2c;
+}
+
+#deleteNote {
+    background: #666;
+    color: white;
+}
+
+#deleteNote:hover {
+    background: #555;
+}
+
+#closeNoteModal {
+    background: #ccc;
+    color: #333;
+}
+
+#closeNoteModal:hover {
+    background: #bbb;
 }
 
 /* Μικρές κάρτες για λεξικά που ανοίγουν μόνο σε tab */
@@ -421,15 +730,27 @@ iframe {
 
 .blocked-card {
     border-radius: 8px;
-    padding: 8px 10px;
+    padding: 10px;
     background: linear-gradient(135deg, #f5f2ea, #e2ddd2);
     border: 1px dashed rgba(21,24,33,0.35);
     font-size: 0.85rem;
     color: var(--nw-ink-dark);
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    overflow: hidden;
     box-shadow: 0 6px 12px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .blocked-card {
+    background: linear-gradient(135deg, #252525, #1a1a1a);
+    border: 1px dashed rgba(232,232,232,0.25);
+    color: var(--nw-ink-dark);
+}
+
+.blocked-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .blocked-name {
@@ -439,6 +760,10 @@ iframe {
 .blocked-info {
     color: #595959;
     font-size: 0.8rem;
+}
+
+body.dark-mode .blocked-info {
+    color: #a0a0a0;
 }
 
 .blocked-btn {
@@ -452,10 +777,22 @@ iframe {
     cursor: pointer;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+    margin-top: 6px;
 }
+
+body.dark-mode .blocked-btn {
+    background: linear-gradient(135deg, #1a3050, #0f1c2f);
+    border: 1px solid rgba(122,142,163,0.6);
+}
+
 .blocked-btn:hover {
     background: linear-gradient(135deg, #3a628f, #1e385b);
 }
+
+body.dark-mode .blocked-btn:hover {
+    background: linear-gradient(135deg, #234060, #152840);
+}
+
 .blocked-btn:active {
     transform: translateY(1px);
 }
@@ -471,10 +808,18 @@ iframe {
     letter-spacing: 0.05em;
 }
 
+body.dark-mode .footer {
+    border-top: 1px solid rgba(212,184,122,0.15);
+}
+
     </style>
 </head>
 <body id="top">
     <div class="header">
+        <div class="theme-toggle">
+            <span class="theme-toggle-label">Dark</span>
+            <div class="toggle-switch" id="themeToggle"></div>
+        </div>
         <h1>NeverWord</h1>
         <p>Tracing the unseen threads of words</p>
     </div>
@@ -496,14 +841,17 @@ iframe {
                  <div class="checkbox-item">
                     <input type="checkbox" id="wiki-en" value="https://www.wikipedia.org/wiki/WORD" data-dict-id="5">
                     <label for="wiki-en">Wikipedia</label>
+                    <span class="note-icon" data-resource="5">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="wr" value="https://www.wordreference.com/engr/WORD" data-dict-id="1">
                     <label for="wr">WordReference</label>
+                    <span class="note-icon" data-resource="1">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="translatum-forum" value="https://www.translatum.gr/forum/?action=search2;search=WORD" data-dict-id="2">
                     <label for="translatum-forum">Translatum Forum</label>
+                    <span class="note-icon" data-resource="2">📝</span>
                 </div>
             </div>
         </div>
@@ -514,54 +862,67 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="cambridge" value="https://dictionary.cambridge.org/dictionary/english/WORD" data-dict-id="6">
                     <label for="cambridge">Cambridge Dictionary</label>
+                    <span class="note-icon" data-resource="6">📝</span>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="oxford" value="https://www.oed.com/search/dictionary/?scope=Entries&q=WORD&tl=true" data-dict-id="7">
-                    <label for="oxford">Oxford Dictionary</label>
+                    <input type="checkbox" id="collins" value="https://www.collinsdictionary.com/dictionary/english/WORD" data-dict-id="7">
+                    <label for="collins">Collins Dictionary</label>
+                    <span class="note-icon" data-resource="7">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="onelook" value="https://www.onelook.com/?w=WORD" data-dict-id="8">
                     <label for="onelook">OneLook</label>
+                    <span class="note-icon" data-resource="8">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="merriam" value="https://www.merriam-webster.com/dictionary/WORD" data-dict-id="9">
                     <label for="merriam">Merriam-Webster</label>
+                    <span class="note-icon" data-resource="9">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="thesaurus" value="https://www.thesaurus.com/browse/WORD" data-dict-id="11">
                     <label for="thesaurus">Thesaurus</label>
+                    <span class="note-icon" data-resource="11">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="powerthesaurus" value="https://www.powerthesaurus.org/WORD/synonyms" data-dict-id="40">
                     <label for="powerthesaurus">Power Thesaurus</label>
+                    <span class="note-icon" data-resource="40">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="linguee" value="https://www.linguee.com/english-greek/search?source=auto&query=WORD" data-dict-id="12">
                     <label for="linguee">Linguee</label>
+                    <span class="note-icon" data-resource="12">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="glosbe" value="https://glosbe.com/en/el/WORD" data-dict-id="13">
                     <label for="glosbe">Glosbe</label>
+                    <span class="note-icon" data-resource="13">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="mymemory" value="https://mymemory.translated.net/en/English/Greek/WORD" data-dict-id="14">
                     <label for="mymemory">MyMemory</label>
+                    <span class="note-icon" data-resource="14">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="babelnet" value="https://babelnet.org/search?word=WORD&lang=EN&transLang=EL" data-dict-id="16">
                     <label for="babelnet">BabelNet</label>
+                    <span class="note-icon" data-resource="16">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="babla" value="https://en.bab.la/dictionary/english-greek/WORD" data-dict-id="17">
                     <label for="babla">bab.la</label>
+                    <span class="note-icon" data-resource="17">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="dictcom" value="https://dict.com/greek-english/WORD" data-dict-id="18">
                     <label for="dictcom">Dict.com</label>
+                    <span class="note-icon" data-resource="18">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="urban" value="https://www.urbandictionary.com/define.php?term=WORD" data-dict-id="19">
                     <label for="urban">Urban Dictionary</label>
+                    <span class="note-icon" data-resource="19">📝</span>
                 </div>
             </div>
         </div>
@@ -572,10 +933,12 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="lexigram1" value="https://www.lexigram.gr/lex/enni/WORD" data-dict-id="22">
                     <label for="lexigram1">Lexigram (Ετυμολογικό)</label>
+                    <span class="note-icon" data-resource="22">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="triantafyllides" value="https://www.greek-language.gr/greekLang/modern_greek/tools/lexica/triantafyllides/search.html?lq=WORD" data-dict-id="24">
                     <label for="triantafyllides">Λεξικό Τριανταφυλλίδη</label>
+                    <span class="note-icon" data-resource="24">📝</span>
                 </div>
             </div>
         </div>
@@ -586,10 +949,12 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="ozdic" value="https://ozdic.com/collocation/WORD" data-dict-id="27">
                     <label for="ozdic">Ozdic</label>
+                    <span class="note-icon" data-resource="27">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="wr-colloc" value="https://www.wordreference.com/englishcollocations/WORD" data-dict-id="28">
                     <label for="wr-colloc">WordReference Collocations</label>
+                    <span class="note-icon" data-resource="28">📝</span>
                 </div>
             </div>
         </div>
@@ -600,18 +965,22 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="IATE" value="https://new.iate.europa.eu/search/search-by-url?term=WORD&sl=en&tl=el%2Cen%2Cla%2Cmul&fields=0&matching=1&type=0,1,2,3,4&target_reliability=1,2,3,4&primarity=0,1&evaluation=-1,0,1,2,3,4" data-dict-id="30">
                     <label for="IATE">IATE (EN -> GR)</label>
+                    <span class="note-icon" data-resource="30">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="IATE2" value="https://new.iate.europa.eu/search/search-by-url?term=WORD&sl=el&tl=en%2Cen%2Cla%2Cmul&fields=0&matching=1&type=0,1,2,3,4&target_reliability=1,2,3,4&primarity=0,1&evaluation=-1,0,1,2,3,4" data-dict-id="31">
                     <label for="IATE2">IATE (GR -> EN)</label>
+                    <span class="note-icon" data-resource="31">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="TechDico" value="https://el.techdico.com/%CE%BC%CE%B5%CF%84%CE%AC%CF%86%CF%81%CE%B1%CF%83%CE%B7/%CE%B1%CE%B3%CE%B3%CE%BB%CE%B9%CE%BA%CE%AC-%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC/WORD.html" data-dict-id="32">
                     <label for="TechDico">Tech Dico (EN -> GR)</label>
+                    <span class="note-icon" data-resource="32">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="TechDico2" value="https://el.techdico.com/%CE%BC%CE%B5%CF%84%CE%AC%CF%86%CF%81%CE%B1%CF%83%CE%B7/%CE%B5%CE%BB%CE%BB%CE%B7%CE%BD%CE%B9%CE%BA%CE%AC-%CE%B1%CE%B3%CE%B3%CE%BB%CE%B9%CE%BA%CE%AC/WORD.html" data-dict-id="33">
                     <label for="TechDico2">Tech Dico (GR -> EN)</label>
+                    <span class="note-icon" data-resource="33">📝</span>
                 </div>
             </div>
         </div>
@@ -622,10 +991,12 @@ iframe {
                 <div class="checkbox-item">
                     <input type="checkbox" id="EUR-LEX" value="https://eur-lex.europa.eu/search.html?scope=EURLEX&text=WORD&lang=el&type=quick&qid=1765462498139" data-dict-id="34">
                     <label for="EUR-LEX">Eur Lex (EN)</label>
+                    <span class="note-icon" data-resource="34">📝</span>
                 </div>
                 <div class="checkbox-item">
                     <input type="checkbox" id="EUR-LEX2" value="https://eur-lex.europa.eu/search.html?lang=el&text=WORD&qid=1765466408255&type=quick&scope=EURLEX&locale=en" data-dict-id="35">
                     <label for="EUR-LEX2">Eur Lex (GR)</label>
+                    <span class="note-icon" data-resource="35">📝</span>
                 </div>
             </div>
         </div>
@@ -658,6 +1029,19 @@ iframe {
 
     <div id="results"></div>
 
+    <!-- Note Modal -->
+    <div id="noteModal" class="note-modal">
+        <div class="note-modal-content">
+            <h3>📝 Προσωπική Σημείωση</h3>
+            <textarea id="noteTextarea" placeholder="Γράψτε τη σημείωσή σας εδώ..."></textarea>
+            <div class="note-modal-buttons">
+                <button id="closeNoteModal">Ακύρωση</button>
+                <button id="deleteNote">Διαγραφή</button>
+                <button id="saveNote">Αποθήκευση</button>
+            </div>
+        </div>
+    </div>
+
     <div class="footer">
         Made with ❤️ for <a href="https://www.metafrasi.edu.gr/" target="_blank" style="color: var(--nw-footer-color); text-decoration: underline;">meta|φραση</a>
 		by <a href="https://www.facebook.com/transparent.ballerina.5/" target="_blank" style="color: var(--nw-footer-color); text-decoration: underline;">Christine Vasileiadou</a>, 2025
@@ -668,6 +1052,26 @@ iframe {
     const searchInput = document.getElementById('searchInput');
     const errorMsg = document.getElementById('errorMsg');
     const results = document.getElementById('results');
+    const themeToggle = document.getElementById('themeToggle');
+
+    // Theme toggle functionality
+    const THEME_KEY = 'nw_theme';
+    
+    function initTheme() {
+        const savedTheme = localStorage.getItem(THEME_KEY);
+        if (savedTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('dark-mode');
+        const isDark = document.body.classList.contains('dark-mode');
+        localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+    }
+
+    themeToggle.addEventListener('click', toggleTheme);
+    initTheme();
 
     // ΝΕΕΣ ΑΝΑΦΟΡΕΣ ΚΟΥΜΠΙΩΝ
     const searchAllEnBtn = document.getElementById('searchAllEnBtn');
@@ -675,7 +1079,7 @@ iframe {
     const clearAllBtn = document.getElementById('clearAllBtn');
 
     // IDs που ΔΕΝ φορτώνουν σε iframe
-    const BLOCKED_IDS = [1, 2, 4, 6, 7, 8, 10, 11, 13, 14, 15, 17, 24, 25, 26, 28, 29, 34, 35, 40];
+    const BLOCKED_IDS = [1, 2, 4, 6, 7, 8, 10, 11, 13, 14, 15, 17, 22, 24, 25, 26, 28, 29, 34, 35, 40];
 
     const ENGLISH_IDS = [5, 1, 2, 6, 7, 8, 9, 11, 12, 13, 14, 16, 17, 18, 19, 27, 28, 30, 32, 34, 40];
     const GREEK_IDS = [5, 1, 2, 22, 24, 31, 33, 35];
@@ -683,7 +1087,6 @@ iframe {
     // -- Scroll persistence config --
     const SCROLL_KEY = 'nw_scrollY';
 
-    // Tell browser we will manage scroll restoration (if supported)
     try { if ('scrollRestoration' in history) history.scrollRestoration = 'manual'; } catch (e) { /* ignore */ }
 
     function saveScrollPosition() {
@@ -698,30 +1101,25 @@ iframe {
             if (raw === null) return;
             const y = parseInt(raw, 10);
             if (isNaN(y)) return;
-            // ensure layout finished — use rAF and small timeout
             requestAnimationFrame(() => {
                 setTimeout(() => {
                     try { window.scrollTo(0, y); } catch (e) { /* ignore */ }
-                    // remove the stored value shortly after restore to avoid stale restores
                     try { sessionStorage.removeItem(SCROLL_KEY); } catch (e) { /* ignore */ }
                 }, 30);
             });
         } catch (e) { /* ignore */ }
     }
 
-    // restore on pageshow (covers BFCache cases) and when tab becomes visible
     window.addEventListener('pageshow', restoreScrollPosition);
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'visible') restoreScrollPosition();
     });
 
-    // save when the page loses visibility or focus (covers middle-click / context-menu opens)
     document.addEventListener('visibilitychange', () => {
         if (document.visibilityState === 'hidden') saveScrollPosition();
     });
     window.addEventListener('blur', () => { saveScrollPosition(); });
 
-    // functions for checkbox toggles (unchanged logic)
     function toggleCheckboxes(ids, forceState = null) {
         const allCheckboxes = document.querySelectorAll('input[type="checkbox"]');
         allCheckboxes.forEach(checkbox => {
@@ -748,6 +1146,70 @@ iframe {
     searchAllEnBtn.addEventListener('click', selectAllEnglish);
     searchAllGrBtn.addEventListener('click', selectAllGreek);
     clearAllBtn.addEventListener('click', clearAll);
+
+    // ========== PERSONAL NOTES ==========
+    let notes = JSON.parse(localStorage.getItem('afterword-notes') || '{}');
+    let currentNoteResource = null;
+
+    const noteModal = document.getElementById('noteModal');
+    const noteTextarea = document.getElementById('noteTextarea');
+    const saveNoteBtn = document.getElementById('saveNote');
+    const deleteNoteBtn = document.getElementById('deleteNote');
+    const closeNoteModalBtn = document.getElementById('closeNoteModal');
+
+    // Initialize notes on load
+    document.querySelectorAll('.note-icon').forEach(icon => {
+        const resourceId = icon.dataset.resource;
+        if (notes[resourceId]) {
+            icon.classList.add('has-note');
+        }
+        
+        // Open note modal
+        icon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            currentNoteResource = this.dataset.resource;
+            noteTextarea.value = notes[currentNoteResource] || '';
+            noteModal.classList.add('active');
+            noteTextarea.focus();
+        });
+    });
+
+    // Save note
+    saveNoteBtn.addEventListener('click', function() {
+        const noteText = noteTextarea.value.trim();
+        
+        if (noteText) {
+            notes[currentNoteResource] = noteText;
+            document.querySelector(`.note-icon[data-resource="${currentNoteResource}"]`).classList.add('has-note');
+        } else {
+            delete notes[currentNoteResource];
+            document.querySelector(`.note-icon[data-resource="${currentNoteResource}"]`).classList.remove('has-note');
+        }
+        
+        localStorage.setItem('afterword-notes', JSON.stringify(notes));
+        noteModal.classList.remove('active');
+    });
+
+    // Delete note
+    deleteNoteBtn.addEventListener('click', function() {
+        delete notes[currentNoteResource];
+        document.querySelector(`.note-icon[data-resource="${currentNoteResource}"]`).classList.remove('has-note');
+        localStorage.setItem('afterword-notes', JSON.stringify(notes));
+        noteModal.classList.remove('active');
+    });
+
+    // Close note modal
+    closeNoteModalBtn.addEventListener('click', function() {
+        noteModal.classList.remove('active');
+    });
+
+    noteModal.addEventListener('click', function(e) {
+        if (e.target === noteModal) {
+            noteModal.classList.remove('active');
+        }
+    });
 
     function performSearch() {
         const term = searchInput.value.trim();
@@ -776,7 +1238,6 @@ iframe {
         }
 
         displayResults(selected);
-        // keep previous behavior (scroll to results)
         results.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -807,9 +1268,7 @@ iframe {
             button.className = 'open-tab-btn';
             button.textContent = 'Άνοιγμα σε νέα καρτέλα';
             button.addEventListener('click', () => {
-                // main save point
                 saveScrollPosition();
-                // open new tab as before
                 window.open(dict.url, '_blank', 'noopener');
             });
 
@@ -841,26 +1300,30 @@ iframe {
                 const card = document.createElement('div');
                 card.className = 'blocked-card';
 
+                const content = document.createElement('div');
+                content.className = 'blocked-content';
+
                 const name = document.createElement('div');
                 name.className = 'blocked-name';
                 name.textContent = dict.label;
 
                 const info = document.createElement('div');
                 info.className = 'blocked-info';
-                info.textContent = 'Αυτό το λεξικό δεν μπορεί να ενσωματωθεί στη σελίδα (iframe).';
+                info.textContent = 'Αυτό το λεξικό ανοίγει αυτόνομα για καλύτερη συμβατότητα.';
 
                 const btn = document.createElement('button');
                 btn.className = 'blocked-btn';
                 btn.textContent = 'Άνοιγμα σε νέα καρτέλα';
                 btn.addEventListener('click', () => {
-                    // main save point
                     saveScrollPosition();
                     window.open(dict.url, '_blank', 'noopener');
                 });
 
-                card.appendChild(name);
-                card.appendChild(info);
-                card.appendChild(btn);
+                content.appendChild(name);
+                content.appendChild(info);
+                content.appendChild(btn);
+                card.appendChild(content);
+                
                 grid.appendChild(card);
             });
 
